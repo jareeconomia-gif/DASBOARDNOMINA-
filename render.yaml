@@ -1,3 +1,9 @@
+databases:
+  - name: subtec-nomina-db
+    plan: free
+    databaseName: subtec_nomina
+    user: subtec_nomina
+
 services:
   - type: web
     name: subtec-nomina-dashboard
@@ -10,3 +16,9 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 22
+      - key: DATABASE_URL
+        fromDatabase:
+          name: subtec-nomina-db
+          property: connectionString
+      - key: SESSION_SECRET
+        generateValue: true
