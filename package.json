@@ -1,8 +1,8 @@
 {
   "name": "subtec-nomina-dashboard",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "Dashboard histórico de nómina SUBTEC - Real vs PPTO",
+  "description": "Dashboard histórico de nómina SUBTEC con base compartida",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -10,5 +10,8 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "pg": "^8.16.3"
   }
 }
