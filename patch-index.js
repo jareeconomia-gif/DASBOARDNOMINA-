@@ -106,21 +106,26 @@ if (html.includes(budgetContractNeedle) && !html.includes('br=br.filter(x=>state
 }
 
 // 8) Opciones de filtro tomadas del catálogo presupuestal oficial.
+// Se usa concatenación en vez de template literals dentro del código inyectado
+// para evitar que Node intente evaluar variables del navegador durante el deploy.
+const filterOptionsReplacement = [
+  'function filterOptions(){',
+  '  const y=currentYear(),yr=records.filter(r=>+r.year===y);',
+  '  const monthVals=unique(yr.map(r=>+r.month_num)).map(Number).filter(Boolean).sort((a,b)=>a-b).map(m=>({v:String(m),label:MONTHS[m-1],sub:num(yr.filter(r=>+r.month_num===m).length)+" registros"}));',
+  '  const periodRows=state.months.size?yr.filter(r=>state.months.has(String(+r.month_num))):yr;',
+  '  const periods=unique(periodRows.map(r=>r.period_key)).map(k=>periodRows.find(r=>r.period_key===k)).filter(Boolean).sort((a,b)=>(a.date_end||"").localeCompare(b.date_end||"")||a.payroll.localeCompare(b.payroll)).map(r=>({v:r.period_key,label:r.period_label,sub:(r.period||"")+(r.month_name?" · "+r.month_name:"")}));',
+  '  const contracts=unique(BUDGET_ROWS.map(b=>b.contract).filter(Boolean)).sort().map(v=>({v,label:v}));',
+  '  const projects=unique(BUDGET_ROWS.map(projectFilterKeyBudget).filter(v=>v&&norm(v)!=="sin homologar")).sort().map(v=>({v,label:v}));',
+  '  const nominaMap=new Map();',
+  '  BUDGET_ROWS.forEach(b=>{const key=nominaFilterKeyBudget(b);if(key&&!nominaMap.has(key))nominaMap.set(key,String(b.nomina||hcBudgetNominaLabel(b)).trim())});',
+  '  const nominas=[...nominaMap.entries()].sort((a,b)=>a[1].localeCompare(b[1])).map(([v,label])=>({v,label}));',
+  '  return{months:monthVals,periods,contracts,projects,nominas};',
+  '}',
+  'function renderMulti'
+].join('\n');
 html = html.replace(
   /function filterOptions\(\)\{.*?\}\nfunction renderMulti/s,
-`function filterOptions(){
-  const y=currentYear(),yr=records.filter(r=>+r.year===y);
-  const monthVals=unique(yr.map(r=>+r.month_num)).map(Number).filter(Boolean).sort((a,b)=>a-b).map(m=>({v:String(m),label:MONTHS[m-1],sub:\`${num(yr.filter(r=>+r.month_num===m).length)} registros\`}));
-  const periodRows=state.months.size?yr.filter(r=>state.months.has(String(+r.month_num))):yr;
-  const periods=unique(periodRows.map(r=>r.period_key)).map(k=>periodRows.find(r=>r.period_key===k)).filter(Boolean).sort((a,b)=>(a.date_end||"").localeCompare(b.date_end||"")||a.payroll.localeCompare(b.payroll)).map(r=>({v:r.period_key,label:r.period_label,sub:\`${r.period||""}${r.month_name?` · ${r.month_name}`:""}\`}));
-  const contracts=unique(BUDGET_ROWS.map(b=>b.contract).filter(Boolean)).sort().map(v=>({v,label:v}));
-  const projects=unique(BUDGET_ROWS.map(projectFilterKeyBudget).filter(v=>v&&norm(v)!=="sin homologar")).sort().map(v=>({v,label:v}));
-  const nominaMap=new Map();
-  BUDGET_ROWS.forEach(b=>{const key=nominaFilterKeyBudget(b);if(key&&!nominaMap.has(key))nominaMap.set(key,String(b.nomina||hcBudgetNominaLabel(b)).trim())});
-  const nominas=[...nominaMap.entries()].sort((a,b)=>a[1].localeCompare(b[1])).map(([v,label])=>({v,label}));
-  return{months:monthVals,periods,contracts,projects,nominas};
-}
-function renderMulti`
+  filterOptionsReplacement
 );
 
 // 9) Etiqueta 'Todas' para Nómina.
