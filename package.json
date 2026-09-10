@@ -1,12 +1,12 @@
 {
   "name": "subtec-nomina-dashboard",
-  "version": "2.0.6",
+  "version": "2.0.7",
   "private": true,
   "description": "Dashboard histórico de nómina SUBTEC con base compartida persistente",
   "main": "server.js",
   "scripts": {
-    "start": "node patch-server-v105.js && node patch-server-v106.js && node patch-index.js && node patch-summary-table.js && node patch-v104.js && node patch-v107.js && node server.js",
-    "check": "node --check patch-server-v105.js && node --check patch-server-v106.js && node --check patch-index.js && node --check patch-summary-table.js && node --check patch-v104.js && node --check patch-v107.js && node --check server.js"
+    "start": "node patch-server-v105.js && node patch-server-v106.js && node patch-index.js && node patch-summary-table.js && node patch-v104.js && node patch-v107.js && node patch-v108.js && node server.js",
+    "check": "node --check patch-server-v105.js && node --check patch-server-v106.js && node --check patch-index.js && node --check patch-summary-table.js && node --check patch-v104.js && node --check patch-v107.js && node --check patch-v108.js && node --check server.js"
   },
   "engines": {
     "node": ">=20"
