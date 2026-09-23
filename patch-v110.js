@@ -17,13 +17,13 @@ const css=String.raw`
 .final-summary-table tr.front-total td.final-variance,.final-summary-table tr.grand-total td.final-variance,.final-summary-table tr.center-total td.final-variance{color:inherit}
 .final-summary-table thead th{min-width:125px}
 `;
-html=html.replace('</style>',css+'\\n</style>');
+html=html.replace('</style>',css+'\n</style>');
 const injected=String.raw`
 // ===== V110_FINAL_VARIANCES =====
 // Amplía la tabla existente, sin cambiar su fuente, filtros, PPTO, agrupación ni subtotales.
 function finalVarianceNumberV110(value){
-  const s=String(value==null?'':value).replace(/\\s/g,'').replace(/,/g,'');
-  const n=Number(s.replace(/[^0-9.\\-]/g,''));
+  const s=String(value==null?'':value).replace(/\s/g,'').replace(/,/g,'');
+  const n=Number(s.replace(/[^0-9.\-]/g,''));
   return Number.isFinite(n)?n:0;
 }
 function finalVarianceLabelV110(delta,currency){
@@ -98,7 +98,7 @@ function decorateFinalTableV110(){
 `;
 const pos=html.lastIndexOf('</script>');
 if(pos<0){console.error('patch-v110: no se encontró </script>');process.exit(1)}
-html=html.slice(0,pos)+injected+'\\n'+html.slice(pos);
+html=html.slice(0,pos)+injected+'\n'+html.slice(pos);
 html=html.replace(/V109 · ACUMULADO HOJAS VERDES/g,'V110 · VARIACIONES HC Y COSTO');
 fs.writeFileSync(file,html,'utf8');
 console.log('patch-v110: variaciones HC y costo agregadas a tabla ejecutiva; 9 columnas.');
